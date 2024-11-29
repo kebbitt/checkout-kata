@@ -1,14 +1,20 @@
 ﻿namespace Bright.Supermarket.App.Domain;
 
-public class LineItem(string sku, IReadOnlyList<PricingRule>? lineItemPricingRules = default)
+public class LineItem(string sku, PricingRule lineItemPricingRule)
 {
-    private readonly IReadOnlyList<PricingRule> _lineItemPricingRules = lineItemPricingRules ?? throw new ArgumentNullException(nameof(lineItemPricingRules));
+    private readonly PricingRule _lineItemPricingRule = lineItemPricingRule ?? throw new ArgumentNullException(nameof(lineItemPricingRule));
 
     public string Sku { get; } = sku;
     public int Quantity { get; set; } = 1;
 
     public int CalculateLineItemTotal()
     {
-        throw new NotImplementedException();
+        var lineItemTotal = 0;
+        var quantityLeftToPrice = Quantity;
+        while(quantityLeftToPrice >= 0)
+        {
+
+        }
+        return lineItemTotal;
     }
 }

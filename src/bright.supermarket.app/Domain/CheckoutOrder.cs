@@ -32,7 +32,8 @@ public class CheckoutOrder : ICheckoutOrder
         }
         else
         {
-            LineItems.Add(new LineItem(sku, skuPricingRules.SelectMany(g => g).ToList().AsReadOnly()));
+            // TODO: Assume there is just one pricing rule for each SKU just now. Likely this should be refactored to satisfy open/closed
+            LineItems.Add(new LineItem(sku, skuPricingRules.SelectMany(g => g).First()));
         }
 
         return true;
