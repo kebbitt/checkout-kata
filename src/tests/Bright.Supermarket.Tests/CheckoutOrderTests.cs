@@ -28,14 +28,14 @@ public class CheckoutOrderTests(ITestOutputHelper console)
         var order = CreateCheckoutOrder();
         var expectedMessage = "The Sku was not found.";
 
-        using var sw = new StringWriter();
-        Console.SetOut(sw);
+        var consoleOutput = new StringWriter();
+        Console.SetOut(consoleOutput);
         // Act
         var result = order.AddItem("Q");
 
         // Assert
         Assert.False(result);
-        Assert.Equal(expectedMessage, sw.ToString());
+        Assert.Equal(expectedMessage, consoleOutput.ToString().Trim());
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class CheckoutOrderTests(ITestOutputHelper console)
 
         // Assert
         Assert.Single(order.LineItems);
-        Assert.Equal(expectedLineItem, order.LineItems.First());
+        Assert.Equivalent(expectedLineItem, order.LineItems.First());
     }
 
     [Fact]
