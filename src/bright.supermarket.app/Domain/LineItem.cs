@@ -13,7 +13,17 @@ public class LineItem(string sku, PricingRule lineItemPricingRule)
         var quantityLeftToPrice = Quantity;
         while(quantityLeftToPrice >= 0)
         {
-
+            if (lineItemPricingRule is { MultiPrice: not null, MultiQuantity: not null }
+                && lineItemPricingRule.MultiQuantity.Value >= quantityLeftToPrice)
+            {
+                lineItemTotal += lineItemPricingRule.MultiPrice.Value;
+                quantityLeftToPrice-= lineItemPricingRule.MultiQuantity.Value;
+            }
+            else
+            {
+                lineItemTotal += lineItemPricingRule.UnitPrice;
+                quantityLeftToPrice--;
+            }
         }
         return lineItemTotal;
     }
