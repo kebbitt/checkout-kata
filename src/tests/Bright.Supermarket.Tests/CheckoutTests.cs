@@ -9,7 +9,7 @@ public class CheckoutTests
     private readonly Mock<CheckoutOrder> _checkoutOrderMock = new();
 
     [Fact]
-    public void Scan_WithNoExistingOrder_ShouldAddLineItemToNewOrder()
+    public void Scan_WithNoExistingOrder_ShouldCreateAnOrder()
     {
         // Arrange
         var sku = "A";
@@ -21,8 +21,6 @@ public class CheckoutTests
 
         // Assert
         Assert.NotNull(checkout.CurrentOrder);
-        Assert.Single(checkout.CurrentOrder.LineItems);
-        Assert.Equal(expectedLineItem, checkout.CurrentOrder.LineItems.First());
     }
 
     [Fact]
@@ -30,7 +28,7 @@ public class CheckoutTests
     {
         // Arrange
         var sku = "B";
-        var existingOrder = new CheckoutOrder { LineItems = new List<LineItem>() { new LineItem("A") } };
+        var existingOrder = _checkoutOrderMock.Object;
         _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(existingOrder);
         var checkout = CreateCheckout();
 
@@ -40,24 +38,6 @@ public class CheckoutTests
         // Assert
         Assert.Equal(2, checkout.CurrentOrder.LineItems.Count);
         Assert.Contains(checkout.CurrentOrder.LineItems, li => li.Sku == "B");
-    }
-
-    [Fact]
-    public void Scan_WithExistingOrder_AndItemInSameSku_ShouldUpdateLineItem()
-    {
-        // Arrange
-        var sku = "A";
-        var expectedLineItem = new LineItem("A") {Quantity = 2};
-        var existingOrder = new CheckoutOrder { LineItems = new List<LineItem>() { new LineItem("A") } };
-        _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(existingOrder);
-        var checkout = CreateCheckout();
-
-        // Act
-        checkout.Scan(sku);
-
-        // Assert
-        Assert.Single(checkout.CurrentOrder.LineItems);
-        Assert.Equal(expectedLineItem, checkout.CurrentOrder.LineItems.First());
     }
 
     [Fact]

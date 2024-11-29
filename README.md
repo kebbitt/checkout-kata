@@ -62,24 +62,25 @@ These are built around Checkout suggested interface. Not looking for 80% coverag
 Given a checkout order does not exist\
 When Scan is called on the item at checkout\
 Then a new order is created\
-And the item is added to a new lineitem
-
-*Scan of additional item in different SKU*\
-Given a checkout order exists\
-And a lineitem for a different SKU exists\
-When Scan is called on the item at checkout\
-Then a new lineitem is created for the additional SKU
-
-*Scan of additional item in same SKU*\
-Given a checkout order exists\
-And a lineitem for a SKU exists\
-When Scan is called on the item at checkout\
-Then quantity on existing lineitem is incremented
 
 *Display Total*\
 Given a checkout order with 1 or more lineitems\
 When GetTotalPrice is called at the checkout\
 Then the displayed price matches the calculated total of the order
+
+*Add additional quantity of SKU Item to order*\
+Given a checkout order\
+And a lineitem for a SKU exists\
+When AddItem is called on the order\
+And the SKU is available to pricing rules
+Then quantity on existing lineitem is incremented
+
+*Add new SKU Item to order*\
+Given a checkout order\
+And a lineitem for a SKU does not exist\
+When AddItem is called on the order\
+And the SKU is available to pricing rules
+Then a new lineitem is created for the SKU
 
 *Calculate correct price on order with multibuy offer*\
 Given a checkout order with items qualifying for an offer\
