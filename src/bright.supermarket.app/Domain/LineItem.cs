@@ -11,10 +11,10 @@ public class LineItem(string sku, PricingRule lineItemPricingRule)
     {
         var lineItemTotal = 0;
         var quantityLeftToPrice = Quantity;
-        while(quantityLeftToPrice >= 0)
+        while(quantityLeftToPrice > 0)
         {
             if (lineItemPricingRule is { MultiPrice: not null, MultiQuantity: not null }
-                && lineItemPricingRule.MultiQuantity.Value >= quantityLeftToPrice)
+                && quantityLeftToPrice >= lineItemPricingRule.MultiQuantity.Value)
             {
                 lineItemTotal += lineItemPricingRule.MultiPrice.Value;
                 quantityLeftToPrice-= lineItemPricingRule.MultiQuantity.Value;
