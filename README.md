@@ -1,4 +1,4 @@
-# checkout-kata
+aa checkout-kata
 In a normal supermarket, products are identified using Stock Keeping Units, or SKUs. In our supermarket, we’ll use individual letters of the alphabet (A, B, C, and so on). Our goods are priced individually. In addition, some items are multipriced: buy _n_ of them, and they’ll cost you _y_. For example, item ‘A’ might cost 50 pounds individually, but this week we have a special offer; buy three ‘A’s and they’ll cost you 130. The current pricing and offers are as follows:
 
 | SKU  | Unit Price | Special Price |
@@ -76,33 +76,33 @@ And a lineitem for a SKU exists\
 When Scan is called on the item at checkout\
 Then quantity on existing lineitem is incremented
 
-*Display Basic Total*\
-Given a checkout order with 1 item\
-When GetTotalPrice is called\
-Then the expected price is displayed
-
-*Display correct price on order with multibuy offer*\
-Given a checkout order with items qualifying for an offer\
-When GetTotalPrice is called\
-Then the expected price is displayed
-
-*Display correct price on order with stacked multibuy offers*\
-Given a checkout order with items qualifying for an offer\
-And mulitbuy is stacked over 2 or more groups
-When GetTotalPrice is called\
-Then the expected price is displayed
-
-*Display correct price on order with mix of multibuy and individual items of same SKU*\
-Given a checkout order with items qualifying for an offer\
-And items of same SKU that do not qualify for an offer\
-When GetTotalPrice is called\
-Then the expected price is displayed
+*Display Total*\
+Given a checkout order with 1 or more lineitems\
+When GetTotalPrice is called at the checkout\
+Then the displayed price matches the calculated total of the order
 
 *Display correct price on subsequent order*\
 Given a completed order\
 And a 2nd customer scans 1 or more items\
-When GetTotalPrice is called\
+When GetTotalPrice is called at the checkout\
 Then 2nd customer only sees price of their items
+
+*Calculate correct price on order with multibuy offer*\
+Given a checkout order with items qualifying for an offer\
+When CalculateTotal is called on the order\
+Then the correct price is calculated
+
+*Calculate correct price on order with stacked multibuy offers*\
+Given a checkout order with items qualifying for an offer\
+And mulitbuy is stacked over 2 or more groups
+When CalculateTotal is called on the order\
+Then the correct price is calculated
+
+*Calculate correct price on order with mix of multibuy and individual items of same SKU*\
+Given a checkout order with items qualifying for an offer\
+And items of same SKU that do not qualify for an offer\
+When CalculateTotal is called on the order\
+Then the correct price is calculated
 
 #### Exception Criteria
 
