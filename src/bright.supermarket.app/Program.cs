@@ -34,16 +34,15 @@ while (key is not ConsoleKey.Escape)
             }
             WriteLine("------------------------------");
             WriteLine("TOTAL £{0}", total);
-            WriteLine("");
+            WriteLine();
+            WriteLine("Please enter a SKU letter to scan, press ENTER to complete your purchases, or ESC to exit.");
         }
     }
     else {
         supermarketCheckout.Scan(key.ToString());
         WriteLine("You scanned {0}", key.ToString());
+        WriteLine();
     }
-
-    WriteLine();
-    WriteLine("Please enter a SKU letter to scan, press ENTER to complete your purchases, or ESC to exit.");
 }
 
 
