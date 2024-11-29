@@ -14,12 +14,12 @@ public class Checkout(ICheckoutOrderFactory orderFactory) : ICheckout
 
             if (!CurrentOrder.AddItem(item))
             {
-                WriteLine("The Sku was not found.");
+                WriteLine("Apologies Shopper, this item has failed to scan.");
             }
         }
         catch (Exception)
         {
-            WriteLine("Apologies, items cannot be scanned at this time.");
+            WriteLine("Apologies Shopper, items cannot be scanned at this time.");
         }
     }
 

@@ -34,7 +34,7 @@ public class CheckoutTests(ITestOutputHelper console)
         // Arrange
         var sku = "A";
         var checkout = CreateCheckout();
-        var expectedMessage = "The Sku was not found.";
+        var expectedMessage = "Apologies Shopper, this item has failed to scan.";
         _checkoutOrderMock.Setup(co => co.AddItem(It.IsAny<string>())).Returns(false);
         var existingOrder = _checkoutOrderMock.Object;
         _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(existingOrder);
@@ -55,7 +55,7 @@ public class CheckoutTests(ITestOutputHelper console)
         // Arrange
         var sku = "A";
         var checkout = CreateCheckout();
-        var expectedMessage = "Apologies, items cannot be scanned at this time.";
+        var expectedMessage = "Apologies Shopper, items cannot be scanned at this time.";
         _orderFactoryMock.Setup(of => of.CreateNewOrder()).Throws<Exception>();
         var consoleOutput = new StringWriter();
         Console.SetOut(consoleOutput);

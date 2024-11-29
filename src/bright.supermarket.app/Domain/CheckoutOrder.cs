@@ -11,7 +11,7 @@ public class CheckoutOrder : ICheckoutOrder
         _pricingRules = pricingRules;
     }
 
-    public int Id { get; set; }
+    public int Id { get; }
 
     public IList<LineItem> LineItems { get; private set; } = new List<LineItem>();
 
@@ -21,7 +21,7 @@ public class CheckoutOrder : ICheckoutOrder
 
         if (!skuPricingRules.Any())
         {
-            WriteLine("The Sku was not found.");
+            WriteLine("Internal Log: The Sku was not found.");
             return false;
         }
 

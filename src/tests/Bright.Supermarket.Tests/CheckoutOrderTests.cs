@@ -26,7 +26,7 @@ public class CheckoutOrderTests(ITestOutputHelper console)
     {
         // Arrange
         var order = CreateCheckoutOrder();
-        var expectedMessage = "The Sku was not found.";
+        var expectedMessage = "Internal Log: The Sku was not found.";
 
         var consoleOutput = new StringWriter();
         Console.SetOut(consoleOutput);
