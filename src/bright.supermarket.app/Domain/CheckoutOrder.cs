@@ -32,7 +32,7 @@ public class CheckoutOrder : ICheckoutOrder
         }
         else
         {
-            LineItems.Add(new LineItem(sku));
+            LineItems.Add(new LineItem(sku, skuPricingRules.SelectMany(g => g).ToList().AsReadOnly()));
         }
 
         return true;
@@ -40,6 +40,11 @@ public class CheckoutOrder : ICheckoutOrder
 
     public virtual int CalculateOrderTotal()
     {
-        throw new NotImplementedException();
+        int orderTotal = 0;
+        foreach (var item in LineItems) {
+            orderTotal += item.CalculateLineItemTotal();
+        }
+
+        return orderTotal;
     }
 }

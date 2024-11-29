@@ -43,7 +43,8 @@ public class CheckoutOrderTests(ITestOutputHelper console)
     {
         // Arrange
         var sku = "A";
-        var expectedLineItem = new LineItem("A") {Quantity = 2};
+        var rules = BuildPricingRules();
+        var expectedLineItem = new LineItem("A", rules.Where(r => r.Sku == sku).ToList().AsReadOnly()) {Quantity = 2};
         var order = CreateCheckoutOrder();
         order.AddItem(sku);
 
