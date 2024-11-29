@@ -1,6 +1,8 @@
-﻿namespace Bright.Supermarket.App.Domain;
+﻿using System.Linq;
 
-public class CheckoutOrder
+namespace Bright.Supermarket.App.Domain;
+
+public class CheckoutOrder : ICheckoutOrder
 {
     private readonly IReadOnlyList<PricingRule> _pricingRules;
     public CheckoutOrder(int id, IReadOnlyList<PricingRule> pricingRules)
@@ -9,17 +11,41 @@ public class CheckoutOrder
         _pricingRules = pricingRules;
     }
 
-    public int Id { get; set; }
+    public int Id { get; }
 
-    public IList<LineItem> LineItems { get; } = new List<LineItem>();
+    public IList<LineItem> LineItems { get; private set; } = new List<LineItem>();
 
     public virtual bool AddItem(string sku)
     {
-        throw new NotImplementedException();
+        var skuPricingRules = _pricingRules.GroupBy(x => x.Sku).Where(g => g.Key == sku);
+
+        if (!skuPricingRules.Any())
+        {
+            WriteLine("Internal Log: The Sku was not found.");
+            return false;
+        }
+
+        var existingLineItem = LineItems.FirstOrDefault(li => li.Sku == sku);
+
+        if(existingLineItem != null) {
+            existingLineItem.Quantity++;
+        }
+        else
+        {
+            // TODO: Assume there is just one pricing rule for each SKU just now. Likely this should be refactored to satisfy open/closed
+            LineItems.Add(new LineItem(sku, skuPricingRules.SelectMany(g => g).First()));
+        }
+
+        return true;
     }
 
     public virtual int CalculateOrderTotal()
     {
-        throw new NotImplementedException();
+        int orderTotal = 0;
+        foreach (var item in LineItems) {
+            orderTotal += item.CalculateLineItemTotal();
+        }
+
+        return orderTotal;
     }
 }

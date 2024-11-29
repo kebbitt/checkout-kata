@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using Bright.Supermarket.App.Domain;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Bright.Supermarket.Tests;
-public class CheckoutOrderTests
+public class CheckoutOrderTests(ITestOutputHelper console)
 {
+    private readonly ITestOutputHelper? _console;
+
     [Fact]
     public void AddItem_WithRecognisedSku_IsAddedToOrder()
     {
@@ -23,16 +26,16 @@ public class CheckoutOrderTests
     {
         // Arrange
         var order = CreateCheckoutOrder();
-        var expectedMessage = "The Sku was not found.";
+        var expectedMessage = "Internal Log: The Sku was not found.";
 
-        using var sw = new StringWriter();
-        Console.SetOut(sw);
+        var consoleOutput = new StringWriter();
+        Console.SetOut(consoleOutput);
         // Act
         var result = order.AddItem("Q");
 
         // Assert
         Assert.False(result);
-        Assert.Equal(expectedMessage, sw.ToString());
+        Assert.Equal(expectedMessage, consoleOutput.ToString().Trim());
     }
 
     [Fact]
@@ -40,7 +43,8 @@ public class CheckoutOrderTests
     {
         // Arrange
         var sku = "A";
-        var expectedLineItem = new LineItem("A") {Quantity = 2};
+        var rules = BuildPricingRules();
+        var expectedLineItem = new LineItem("A", rules.Where(r => r.Sku == sku).FirstOrDefault()) {Quantity = 2};
         var order = CreateCheckoutOrder();
         order.AddItem(sku);
 
@@ -49,7 +53,7 @@ public class CheckoutOrderTests
 
         // Assert
         Assert.Single(order.LineItems);
-        Assert.Equal(expectedLineItem, order.LineItems.First());
+        Assert.Equivalent(expectedLineItem, order.LineItems.First());
     }
 
     [Fact]

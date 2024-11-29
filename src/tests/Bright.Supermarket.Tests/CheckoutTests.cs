@@ -1,19 +1,24 @@
-﻿using Bright.Supermarket.App.Domain;
+﻿using System.IO;
+using Bright.Supermarket.App.Domain;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Bright.Supermarket.Tests;
 
-public class CheckoutTests
+public class CheckoutTests(ITestOutputHelper console)
 {
-    private readonly Mock<IOrderFactory> _orderFactoryMock = new();
-    private readonly Mock<CheckoutOrder> _checkoutOrderMock = new();
+    private readonly ITestOutputHelper _console = console;
+    private readonly Mock<ICheckoutOrderFactory> _orderFactoryMock = new();
+    private readonly Mock<ICheckoutOrder> _checkoutOrderMock = new();
 
     [Fact]
     public void Scan_WithNoExistingOrder_ShouldCreateAnOrder()
     {
         // Arrange
         var sku = "A";
-        var expectedLineItem = new LineItem("A");
+        var existingOrder = _checkoutOrderMock.Object;
+        _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(existingOrder);
         var checkout = CreateCheckout();
 
         // Act
@@ -24,20 +29,43 @@ public class CheckoutTests
     }
 
     [Fact]
-    public void Scan_WithExistingOrder_AndItemInAnotherSku_ShouldAddLineItemToOrder()
+    public void Scan_WithExistingOrder_AndAddItemFails_ShouldDisplayErrorMessage()
     {
         // Arrange
-        var sku = "B";
+        var sku = "A";
+        var checkout = CreateCheckout();
+        var expectedMessage = "Apologies Shopper, this item has failed to scan.";
+        _checkoutOrderMock.Setup(co => co.AddItem(It.IsAny<string>())).Returns(false);
         var existingOrder = _checkoutOrderMock.Object;
         _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(existingOrder);
-        var checkout = CreateCheckout();
+        var consoleOutput = new StringWriter();
+        Console.SetOut(consoleOutput);
 
         // Act
         checkout.Scan(sku);
 
         // Assert
-        Assert.Equal(2, checkout.CurrentOrder.LineItems.Count);
-        Assert.Contains(checkout.CurrentOrder.LineItems, li => li.Sku == "B");
+        var result = consoleOutput.ToString().Trim();
+        Assert.Equal(expectedMessage, result);
+    }
+
+    [Fact]
+    public void Scan_WithNoExistingOrder_AndOrderCannotBeCreated_ShouldDisplayErrorMessage()
+    {
+        // Arrange
+        var sku = "A";
+        var checkout = CreateCheckout();
+        var expectedMessage = "Apologies Shopper, items cannot be scanned at this time.";
+        _orderFactoryMock.Setup(of => of.CreateNewOrder()).Throws<Exception>();
+        var consoleOutput = new StringWriter();
+        Console.SetOut(consoleOutput);
+
+        // Act
+        checkout.Scan(sku);
+
+        // Assert
+        var result = consoleOutput.ToString().Trim();
+        Assert.Equal(expectedMessage, result);
     }
 
     [Fact]
@@ -48,6 +76,7 @@ public class CheckoutTests
         _checkoutOrderMock.Setup(o => o.CalculateOrderTotal()).Returns(expectedTotal);
         _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(_checkoutOrderMock.Object);
         var checkout = CreateCheckout();
+        checkout.Scan("A"); // Scan at least one item to create the order
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -67,10 +96,10 @@ public class CheckoutTests
         Console.SetOut(sw);
 
         // Act
-        var total= checkout.GetTotalPrice();
+        var total = checkout.GetTotalPrice();
 
         // Assert
-        var result = sw.ToString();
+        var result = sw.ToString().Trim();
         Assert.Equal(0, total);
         Assert.Equal(expectedMessage, result);
     }
