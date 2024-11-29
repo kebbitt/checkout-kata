@@ -1,4 +1,4 @@
-# checkout-kata
+aa checkout-kata
 In a normal supermarket, products are identified using Stock Keeping Units, or SKUs. In our supermarket, we’ll use individual letters of the alphabet (A, B, C, and so on). Our goods are priced individually. In addition, some items are multipriced: buy _n_ of them, and they’ll cost you _y_. For example, item ‘A’ might cost 50 pounds individually, but this week we have a special offer; buy three ‘A’s and they’ll cost you 130. The current pricing and offers are as follows:
 
 | SKU  | Unit Price | Special Price |
@@ -62,47 +62,42 @@ These are built around Checkout suggested interface. Not looking for 80% coverag
 Given a checkout order does not exist\
 When Scan is called on the item at checkout\
 Then a new order is created\
-And the item is added to a new lineitem
 
-*Scan of additional item in different SKU*\
-Given a checkout order exists\
-And a lineitem for a different SKU exists\
-When Scan is called on the item at checkout\
-Then a new lineitem is created for the additional SKU
+*Display Total*\
+Given a checkout order with 1 or more lineitems\
+When GetTotalPrice is called at the checkout\
+Then the displayed price matches the calculated total of the order
 
-*Scan of additional item in same SKU*\
-Given a checkout order exists\
+*Add additional quantity of SKU Item to order*\
+Given a checkout order\
 And a lineitem for a SKU exists\
-When Scan is called on the item at checkout\
+When AddItem is called on the order\
+And the SKU is available to pricing rules
 Then quantity on existing lineitem is incremented
 
-*Display Basic Total*\
-Given a checkout order with 1 item\
-When GetTotalPrice is called\
-Then the expected price is displayed
+*Add new SKU Item to order*\
+Given a checkout order\
+And a lineitem for a SKU does not exist\
+When AddItem is called on the order\
+And the SKU is available to pricing rules
+Then a new lineitem is created for the SKU
 
-*Display correct price on order with multibuy offer*\
+*Calculate correct price on order with multibuy offer*\
 Given a checkout order with items qualifying for an offer\
-When GetTotalPrice is called\
-Then the expected price is displayed
+When CalculateTotal is called on the order\
+Then the correct price is calculated
 
-*Display correct price on order with stacked multibuy offers*\
+*Calculate correct price on order with stacked multibuy offers*\
 Given a checkout order with items qualifying for an offer\
 And mulitbuy is stacked over 2 or more groups
-When GetTotalPrice is called\
-Then the expected price is displayed
+When CalculateTotal is called on the order\
+Then the correct price is calculated
 
-*Display correct price on order with mix of multibuy and individual items of same SKU*\
+*Calculate correct price on order with mix of multibuy and individual items of same SKU*\
 Given a checkout order with items qualifying for an offer\
 And items of same SKU that do not qualify for an offer\
-When GetTotalPrice is called\
-Then the expected price is displayed
-
-*Display correct price on subsequent order*\
-Given a completed order\
-And a 2nd customer scans 1 or more items\
-When GetTotalPrice is called\
-Then 2nd customer only sees price of their items
+When CalculateTotal is called on the order\
+Then the correct price is calculated
 
 #### Exception Criteria
 
@@ -119,6 +114,12 @@ When Scan is called on an item at checkout\
 And the SKU unit price is missing from pricing rules\
 Then the scan is unsuccessful\
 And the issue is logged
+
+*Display error if order not in progress*\
+Given no order in progress\
+When GetTotalPrice is called at the checkout\
+Then "No checkout order is in progress." is displayed
+And checkout order is zero
 
 *Item with unrecognised offer is treated individually*\
 Given a checkout order exists\
