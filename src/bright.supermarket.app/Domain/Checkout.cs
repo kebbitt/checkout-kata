@@ -1,7 +1,7 @@
 ﻿namespace Bright.Supermarket.App.Domain;
-public class Checkout(IOrderFactory orderFactory) : ICheckout
+public class Checkout(ICheckoutOrderFactory orderFactory) : ICheckout
 {
-    private readonly IOrderFactory _orderFactory = orderFactory ?? throw new ArgumentNullException(nameof(orderFactory));
+    private readonly ICheckoutOrderFactory _orderFactory = orderFactory ?? throw new ArgumentNullException(nameof(orderFactory));
 
     public ICheckoutOrder? CurrentOrder { get; private set; }
 

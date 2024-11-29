@@ -9,7 +9,7 @@ namespace Bright.Supermarket.Tests;
 public class CheckoutTests(ITestOutputHelper console)
 {
     private readonly ITestOutputHelper _console = console;
-    private readonly Mock<IOrderFactory> _orderFactoryMock = new();
+    private readonly Mock<ICheckoutOrderFactory> _orderFactoryMock = new();
     private readonly Mock<ICheckoutOrder> _checkoutOrderMock = new();
 
     [Fact]
