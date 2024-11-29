@@ -81,12 +81,6 @@ Given a checkout order with 1 or more lineitems\
 When GetTotalPrice is called at the checkout\
 Then the displayed price matches the calculated total of the order
 
-*Display correct price on subsequent order*\
-Given a completed order\
-And a 2nd customer scans 1 or more items\
-When GetTotalPrice is called at the checkout\
-Then 2nd customer only sees price of their items
-
 *Calculate correct price on order with multibuy offer*\
 Given a checkout order with items qualifying for an offer\
 When CalculateTotal is called on the order\
@@ -119,6 +113,12 @@ When Scan is called on an item at checkout\
 And the SKU unit price is missing from pricing rules\
 Then the scan is unsuccessful\
 And the issue is logged
+
+*Display error if order not in progress*\
+Given no order in progress\
+When GetTotalPrice is called at the checkout\
+Then "No checkout order is in progress." is displayed
+And checkout order is zero
 
 *Item with unrecognised offer is treated individually*\
 Given a checkout order exists\
