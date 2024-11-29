@@ -1,6 +1,6 @@
 ﻿namespace Bright.Supermarket.App.Domain;
 
-public class CheckoutOrder
+public class CheckoutOrder : ICheckoutOrder
 {
     private readonly IReadOnlyList<PricingRule> _pricingRules;
     public CheckoutOrder(int id, IReadOnlyList<PricingRule> pricingRules)

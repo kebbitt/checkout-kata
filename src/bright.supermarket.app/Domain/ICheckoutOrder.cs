@@ -1,5 +1,8 @@
 ﻿namespace Bright.Supermarket.App.Domain;
+
 public interface ICheckoutOrder
 {
-    public int CalculateOrderTotal();
+    IList<LineItem> LineItems { get; }
+    bool AddItem(string sku);
+    int CalculateOrderTotal();
 }

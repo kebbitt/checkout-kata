@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using Bright.Supermarket.App.Domain;
 using Moq;
+using Xunit.Abstractions;
 
 namespace Bright.Supermarket.Tests;
-public class CheckoutOrderTests
+public class CheckoutOrderTests(ITestOutputHelper console)
 {
+    private readonly ITestOutputHelper? _console;
+
     [Fact]
     public void AddItem_WithRecognisedSku_IsAddedToOrder()
     {
