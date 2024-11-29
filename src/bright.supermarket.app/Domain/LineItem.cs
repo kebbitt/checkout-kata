@@ -4,4 +4,9 @@ public class LineItem(string sku)
 {
     public string Sku { get; } = sku;
     public int Quantity { get; set; } = 1;
+
+    public int CalculateLineItemTotal()
+    {
+        throw new NotImplementedException();
+    }
 }
