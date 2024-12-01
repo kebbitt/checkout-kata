@@ -37,8 +37,13 @@ public class Checkout(ICheckoutOrderFactory orderFactory) : ICheckout
         // This breaks PoLA (principle of least astonishment but as README mentions, we assume that order is discarded after price display.
         // In reality this should be in separate method etc
         // TODO - write an additional test to ensure this keeps working.
-        CurrentOrder = null;
+        CompleteCustomerTransaction();
 
         return orderTotal;
+    }
+    
+    private void CompleteCustomerTransaction()
+    {
+        CurrentOrder = null;
     }
 }

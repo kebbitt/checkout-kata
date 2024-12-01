@@ -153,6 +153,23 @@ public class CheckoutOrderTests(ITestOutputHelper console)
         Assert.Equal(expectedPrice, total);
     }
 
+    [Fact]
+    public void CalculateOrderTotal_withItemsInAnyOrder_CalculatesCorrectPrice()
+    {
+        // Arrange
+        var expectedPrice = 95;
+        var order = CreateCheckoutOrder();
+        order.AddItem("B");
+        order.AddItem("A");
+        order.AddItem("B");
+
+        // Act
+        var total = order.CalculateOrderTotal();
+
+        // Assert
+        Assert.Equal(expectedPrice, total);
+    }
+
     private CheckoutOrder CreateCheckoutOrder(int? orderId = default, IReadOnlyList<PricingRule>? pricingRules = default)
     {
         return new CheckoutOrder(orderId ?? 1, pricingRules ?? BuildPricingRules());
