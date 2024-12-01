@@ -104,6 +104,23 @@ public class CheckoutTests(ITestOutputHelper console)
         Assert.Equal(expectedMessage, result);
     }
 
+    [Fact]
+    public void GetTotalPrice_WithExistingOrder_ShouldEndTransaction()
+    {
+        // Arrange
+        var checkout = CreateCheckout();
+        _orderFactoryMock.Setup(of => of.CreateNewOrder()).Returns(_checkoutOrderMock.Object);
+        checkout.Scan("A");
+        var lastOrder = checkout.CurrentOrder;
+       
+        // Act
+        var total = checkout.GetTotalPrice();
+
+        // Assert
+        Assert.NotNull(lastOrder);
+        Assert.Null(checkout.CurrentOrder);
+    }
+
     private Checkout CreateCheckout()
     {
         return new Checkout(_orderFactoryMock.Object);
